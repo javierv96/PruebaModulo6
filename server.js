@@ -6,6 +6,21 @@ const app = express(); // Creación de la aplicación Express
 // Definimos el puerto en el que se ejecutará el servidor
 const PORT = 3000;
 
+const archivoDeportes = 'deportes.json';
+
+function leerDatos(){
+    try{
+        const datosJSON = fs.readFileSync (archivoDeportes, 'utf8');
+        return JSON.parse(datosJSON);
+    } catch (error) {
+        return {"deportes":[]}
+    }
+}
+
+function escribirDatos(datos) {
+    fs.writeFileSync(archivoDeportes, JSON.stringify(datos));
+}
+
 // Ruta principal que sirve un archivo HTML
 app.get("/", (req, res) => {
     res.sendFile(__dirname + "/index.html")
@@ -30,11 +45,11 @@ app.get("/agregar", (req, res) => {
             };
 
             // Leemos el archivo JSON que contiene los datos de los deportes
-            const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
+            const datos = leerDatos();
             // Agregamos el nuevo deporte al arreglo existente
-            data.deportes.push(deporte);
+            datos.deportes.push(deporte);
             // Escribimos los datos actualizados en el archivo
-            fs.writeFileSync("deportes.json", JSON.stringify(data));
+            escribirDatos(datos);
             res.send("Deporte almacenado con éxito");
         }
     } catch (error) {
