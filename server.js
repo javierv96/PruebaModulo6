@@ -8,12 +8,12 @@ const PORT = 3000;
 
 const archivoDeportes = 'deportes.json';
 
-function leerDatos(){
-    try{
-        const datosJSON = fs.readFileSync (archivoDeportes, 'utf8');
+function leerDatos() {
+    try {
+        const datosJSON = fs.readFileSync(archivoDeportes, 'utf8');
         return JSON.parse(datosJSON);
     } catch (error) {
-        return {"deportes":[]}
+        return { "deportes": [] }
     }
 }
 
@@ -37,25 +37,35 @@ app.get("/agregar", (req, res) => {
             const error = "Alguno de los valores entregados están vacíos, favor completar";
             console.log(error);
             res.send(error);
-        } else {
-            // Creamos un objeto deporte con los parámetros recibidos
-            const deporte = {
-                nombre,
-                precio,
-            };
-
-            // Leemos el archivo JSON que contiene los datos de los deportes
-            const datos = leerDatos();
-            // Agregamos el nuevo deporte al arreglo existente
-            datos.deportes.push(deporte);
-            // Escribimos los datos actualizados en el archivo
-            escribirDatos(datos);
-            res.send("Deporte almacenado con éxito");
         }
+
+        // Leemos el archivo JSON que contiene los datos de los deportes
+        const datos = leerDatos();
+
+        // Verificamos si ya existe un deporte con el mismo nombre
+        const deporteExistente = datos.deportes.find(deporte => deporte.nombre === nombre);
+        if (deporteExistente) {
+            const mensaje = `Ya existe un deporte con el nombre ${nombre}`;
+            console.log(mensaje);
+            return res.send(mensaje);
+        }
+
+        // Creamos un objeto deporte con los parámetros recibidos
+        const deporte = {
+            nombre,
+            precio,
+        };
+
+        // Agregamos el nuevo deporte al arreglo existente
+        datos.deportes.push(deporte);
+        // Escribimos los datos actualizados en el archivo
+        escribirDatos(datos);
+        res.send("Deporte almacenado con éxito");
+    
     } catch (error) {
-        console.error("Error al crear el deporte:", error);
-        res.status(500).send("Ocurrió un error al crear el deporte");
-    }
+    console.error("Error al crear el deporte:", error);
+    res.status(500).send("Ocurrió un error al crear el deporte");
+}
 })
 
 //Ruta para ver todos los deportes almacenados
@@ -81,7 +91,7 @@ app.get("/editar", (req, res) => {
             res.send(error);
         } else {
             // Leemos el archivo JSON que contiene los datos de los deportes
-            const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
+            const data = leerDatos();
             // Buscamos el índice del deporte a editar
             const deporteIndex = data.deportes.findIndex((deporte) => deporte.nombre === nombre);
 
@@ -89,7 +99,7 @@ app.get("/editar", (req, res) => {
                 // Actualizamos el precio del deporte
                 data.deportes[deporteIndex].precio = precio;
                 // Escribimos los datos actualizados en el archivo
-                fs.writeFileSync("deportes.json", JSON.stringify(data));
+                escribirDatos(data);
                 res.send(`Precio del deporte ${nombre} actualizado a ${precio}`);
             } else {
                 res.send(`El deporte ${nombre} no fue encontrado`);
@@ -113,7 +123,7 @@ app.get("/eliminar", (req, res) => {
             res.send(error);
         } else {
             // Leemos el archivo JSON que contiene los datos de los deportes
-            const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
+            const data = leerDatos();
             // Buscamos el índice del deporte a eliminar
             const deporteIndex = data.deportes.findIndex((deporte) => deporte.nombre === nombre);
 
@@ -121,7 +131,7 @@ app.get("/eliminar", (req, res) => {
                 // Eliminamos el deporte del arreglo
                 data.deportes.splice(deporteIndex, 1);
                 // Escribimos los datos actualizados en el archivo
-                fs.writeFileSync("deportes.json", JSON.stringify(data));
+                escribirDatos(data);
                 res.send(`Deporte ${nombre} eliminado correctamente`);
             } else {
                 res.send(`El deporte ${nombre} no fue encontrado`);
