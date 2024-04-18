@@ -1,6 +1,7 @@
 // Importamos los módulos necesarios
 const fs = require('fs'); // Módulo para manejar archivos
 const express = require('express'); // Marco web de Node.js
+const e = require('express');
 const app = express(); // Creación de la aplicación Express
 
 // Definimos el puerto en el que se ejecutará el servidor
@@ -21,7 +22,7 @@ app.get("/agregar", (req, res) => {
         if (!nombre || !precio) {
             const error = "Alguno de los valores entregados están vacíos, favor completar";
             console.log(error);
-            res.status(400).send(error);
+            res.send(error);
         } else {
             // Creamos un objeto deporte con los parámetros recibidos
             const deporte = {
@@ -63,7 +64,7 @@ app.get("/editar", (req, res) => {
         if (!nombre || !precio) {
             const error = "Alguno de los valores entregados está vacío, favor completar";
             console.log(error);
-            res.status(400).send(error);
+            res.send(error);
         } else {
             // Leemos el archivo JSON que contiene los datos de los deportes
             const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
@@ -95,7 +96,7 @@ app.get("/eliminar", (req, res) => {
         if (!nombre) {
             const error = "El nombre del deporte no fue proporcionado";
             console.log(error);
-            res.status(400).send(error);
+            res.send(error);
         } else {
             // Leemos el archivo JSON que contiene los datos de los deportes
             const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
