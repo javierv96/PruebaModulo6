@@ -1,7 +1,6 @@
 // Importamos los módulos necesarios
 const fs = require('fs'); // Módulo para manejar archivos
 const express = require('express'); // Marco web de Node.js
-const e = require('express');
 const app = express(); // Creación de la aplicación Express
 
 // Definimos el puerto en el que se ejecutará el servidor
