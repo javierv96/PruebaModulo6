@@ -6,8 +6,13 @@ const app = express(); // Creación de la aplicación Express
 // Definimos el puerto en el que se ejecutará el servidor
 const PORT = 3000;
 
+// Ruta principal que sirve un archivo HTML
+app.get("/", (req, res) => {
+    res.sendFile(__dirname + "/index.html")
+})
+
 // Ruta para agregar un nuevo deporte
-app.get("/nuevoDeporte", (req, res) => {
+app.get("/agregar", (req, res) => {
     // Extraemos los parámetros de la solicitud
     const { nombre, precio } = req.query;
 
@@ -38,13 +43,11 @@ app.get("/nuevoDeporte", (req, res) => {
     }
 })
 
-// Ruta para ver todos los deportes almacenados
-app.get("/verDeportes", (req, res) => {
+//Ruta para ver todos los deportes almacenados
+app.get("/deportes", async (req, res) => {
     try {
-        // Leemos el archivo JSON que contiene los datos de los deportes
-        const data = JSON.parse(fs.readFileSync("deportes.json", "utf8"));
-        // Enviamos los datos de los deportes como respuesta
-        res.json(data.deportes);
+        // Enviamos el archivo JSON como respuesta
+        res.sendFile(__dirname + "/deportes.json");
     } catch (error) {
         console.error("Error al leer los deportes:", error);
         res.status(500).send("Ocurrió un error al leer los deportes");
@@ -52,7 +55,7 @@ app.get("/verDeportes", (req, res) => {
 });
 
 // Ruta para editar el precio de un deporte existente
-app.get("/editarDeporte", (req, res) => {
+app.get("/editar", (req, res) => {
     const { nombre, precio } = req.query;
 
     try {
@@ -84,7 +87,7 @@ app.get("/editarDeporte", (req, res) => {
 });
 
 // Ruta para eliminar un deporte
-app.get("/eliminarDeporte", (req, res) => {
+app.get("/eliminar", (req, res) => {
     const { nombre } = req.query;
 
     try {
