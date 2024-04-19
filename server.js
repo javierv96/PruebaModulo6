@@ -8,6 +8,7 @@ const PORT = 3000;
 
 const archivoDeportes = 'deportes.json';
 
+// Lee los datos del archivo deportes.json. Si ocurre un error al leer el archivo, devuelve un objeto vacío.
 function leerDatos() {
     try {
         const datosJSON = fs.readFileSync(archivoDeportes, 'utf8');
@@ -17,6 +18,7 @@ function leerDatos() {
     }
 }
 
+// Convierte los datos a formato JSON y escribe en el archivo deportes.json
 function escribirDatos(datos) {
     fs.writeFileSync(archivoDeportes, JSON.stringify(datos));
 }
@@ -112,8 +114,8 @@ app.get("/editar", (req, res) => {
 });
 
 // Ruta para eliminar un deporte
-app.get("/eliminar", (req, res) => {
-    const { nombre } = req.query;
+app.delete("/eliminar/:nombre", (req, res) => {
+    const  nombre  = req.params.nombre;
 
     try {
         // Verificamos si se proporcionó el nombre del deporte
