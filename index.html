@@ -102,15 +102,12 @@
   }
 
   function eliminar(nombre) {
-  axios.delete(`/eliminar/${nombre}`).then((response) => {
-    alert(response.data);
-    getData();
-  }).catch((error) => {
-    console.error("Error al eliminar el deporte:", error);
-    alert("Ocurrió un error al eliminar el deporte");
-  });
-  $('#exampleModal').modal('hide');
-}
+    axios.get(`/eliminar/${nombre}`).then((response) => {
+      alert(response.data)
+      getData()
+    })
+    $('#exampleModal').modal('hide')
+  }
 </script>
 
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"

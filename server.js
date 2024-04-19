@@ -114,7 +114,7 @@ app.get("/editar", (req, res) => {
 });
 
 // Ruta para eliminar un deporte
-app.delete("/eliminar/:nombre", (req, res) => {
+app.get("/eliminar/:nombre", (req, res) => {
     const  nombre  = req.params.nombre;
 
     try {
