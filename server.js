@@ -8,6 +8,9 @@ const PORT = 3000;
 
 const archivoDeportes = 'deportes.json';
 
+const letras = /^[a-zA-Z]+$/;
+const numeros = /^[0-9]+$/;
+
 // Lee los datos del archivo deportes.json. Si ocurre un error al leer el archivo, devuelve un objeto vacío.
 function leerDatos() {
     try {
@@ -35,39 +38,47 @@ app.get("/agregar", (req, res) => {
 
     try {
         // Verificamos si los parámetros están completos
+
         if (!nombre || !precio) {
             const error = "Alguno de los valores entregados están vacíos, favor completar";
             console.log(error);
             res.send(error);
         }
 
-        // Leemos el archivo JSON que contiene los datos de los deportes
-        const datos = leerDatos();
+        if (letras.test(nombre) && numeros.test(precio)) {
+            // Leemos el archivo JSON que contiene los datos de los deportes
+            const datos = leerDatos();
 
-        // Verificamos si ya existe un deporte con el mismo nombre
-        const deporteExistente = datos.deportes.find(deporte => deporte.nombre === nombre);
-        if (deporteExistente) {
-            const mensaje = `Ya existe un deporte con el nombre ${nombre}`;
-            console.log(mensaje);
-            return res.send(mensaje);
+            // Verificamos si ya existe un deporte con el mismo nombre
+            const deporteExistente = datos.deportes.find(deporte => deporte.nombre === nombre);
+            if (deporteExistente) {
+                const mensaje = `Ya existe un deporte con el nombre ${nombre}`;
+                console.log(mensaje);
+                return res.send(mensaje);
+            }
+
+            // Creamos un objeto deporte con los parámetros recibidos
+            const deporte = {
+                nombre,
+                precio,
+            };
+
+            // Agregamos el nuevo deporte al arreglo existente
+            datos.deportes.push(deporte);
+            // Escribimos los datos actualizados en el archivo
+            escribirDatos(datos);
+            res.send("Deporte almacenado con éxito");
+
+        } else {
+            const error = "Alguno de los valores ingresados no coinciden con el tipo de dato, favor volver a intentar";
+            console.log(error);
+            res.send(error);
         }
 
-        // Creamos un objeto deporte con los parámetros recibidos
-        const deporte = {
-            nombre,
-            precio,
-        };
-
-        // Agregamos el nuevo deporte al arreglo existente
-        datos.deportes.push(deporte);
-        // Escribimos los datos actualizados en el archivo
-        escribirDatos(datos);
-        res.send("Deporte almacenado con éxito");
-    
     } catch (error) {
-    console.error("Error al crear el deporte:", error);
-    res.status(500).send("Ocurrió un error al crear el deporte");
-}
+        console.error("Error al crear el deporte:", error);
+        res.status(500).send("Ocurrió un error al crear el deporte");
+    }
 })
 
 //Ruta para ver todos los deportes almacenados
@@ -115,7 +126,7 @@ app.get("/editar", (req, res) => {
 
 // Ruta para eliminar un deporte
 app.get("/eliminar/:nombre", (req, res) => {
-    const  nombre  = req.params.nombre;
+    const nombre = req.params.nombre;
 
     try {
         // Verificamos si se proporcionó el nombre del deporte
