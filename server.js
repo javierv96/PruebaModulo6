@@ -103,19 +103,24 @@ app.get("/editar", (req, res) => {
             console.log(error);
             res.send(error);
         } else {
-            // Leemos el archivo JSON que contiene los datos de los deportes
-            const data = leerDatos();
-            // Buscamos el índice del deporte a editar
-            const deporteIndex = data.deportes.findIndex((deporte) => deporte.nombre === nombre);
 
-            if (deporteIndex !== -1) {
-                // Actualizamos el precio del deporte
-                data.deportes[deporteIndex].precio = precio;
-                // Escribimos los datos actualizados en el archivo
-                escribirDatos(data);
-                res.send(`Precio del deporte ${nombre} actualizado a ${precio}`);
+            if (numeros.test(precio)) {
+                // Leemos el archivo JSON que contiene los datos de los deportes
+                const data = leerDatos();
+                // Buscamos el índice del deporte a editar
+                const deporteIndex = data.deportes.findIndex((deporte) => deporte.nombre === nombre);
+
+                if (deporteIndex !== -1) {
+                    // Actualizamos el precio del deporte
+                    data.deportes[deporteIndex].precio = precio;
+                    // Escribimos los datos actualizados en el archivo
+                    escribirDatos(data);
+                    res.send(`Precio del deporte ${nombre} actualizado a ${precio}`);
+                } else {
+                    res.send(`El deporte ${nombre} no fue encontrado`);
+                }
             } else {
-                res.send(`El deporte ${nombre} no fue encontrado`);
+                res.send(`Ingrese un precio numerico valido.`);
             }
         }
     } catch (error) {
